@@ -1,47 +1,43 @@
-import { FormEvent, useState } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import Axios from "axios";
-import { useRouter } from "next/router";
+import { FormEvent, useState } from 'react'
+import Head from 'next/head'
+import Link from 'next/link'
+import Axios from 'axios'
+import { useRouter } from 'next/router'
 
-import InputGroup from "../components/InputGroup";
+import InputGroup from '../components/InputGroup'
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [agreement, setAgreement] = useState(false);
-  const [errors, setErrors] = useState<any>({});
+  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [agreement, setAgreement] = useState(false)
+  const [errors, setErrors] = useState<any>({})
 
-  const router = useRouter();
+  const router = useRouter()
 
   const submitForm = async (event: FormEvent) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!agreement) {
-      setErrors({ ...errors, agreement: "You must agree to T&Cs" });
-      return;
+      setErrors({ ...errors, agreement: 'You must agree to T&Cs' })
+      return
     }
 
     try {
-      await Axios.post(
-        "/auth/register",
-        {
-          email,
-          password,
-          username,
-        },
-        { withCredentials: true }
-      );
+      await Axios.post('/auth/register', {
+        email,
+        password,
+        username,
+      })
 
-      router.push("/login");
+      router.push('/login')
     } catch (err) {
-      setErrors(err.response.data);
+      setErrors(err.response.data)
     }
-  };
+  }
 
   return (
-    <div className="flex">
+    <div className="flex bg-white">
       <Head>
         <title>Register</title>
       </Head>
@@ -110,5 +106,5 @@ export default function Register() {
         </div>
       </div>
     </div>
-  );
+  )
 }

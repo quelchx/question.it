@@ -3,6 +3,7 @@
    "version": "0.0.1",
    "description": "Reddit Clone",
    "devDependencies": {
+      "@svgr/webpack": "^5.5.0",
       "@types/bcrypt": "^3.0.0",
       "@types/cookie": "^0.4.0",
       "@types/cookie-parser": "^1.4.2",
@@ -35,7 +36,7 @@
       "start": "ts-node src/server.ts",
       "server": "nodemon --exec ts-node src/server.ts",
       "client": "cd client && npm run dev",
-      "server:client": "concurrently \"npm run server\" \"npm run client\" -n server,client",
+      "dev": "concurrently \"npm run server\" \"npm run client\" -n server,client",
       "typeorm": "ts-node ./node_modules/typeorm/cli.js"
    }
 }
