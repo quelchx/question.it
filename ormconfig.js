@@ -16,6 +16,7 @@ module.exports = {
    "subscribers": [
       "src/subscriber/**/*.ts"
    ],
+   "seeds": ["src/seeds/**/*{.ts,.js}"],
    "cli": {
       "entitiesDir": "src/entity",
       "migrationsDir": "src/migration",

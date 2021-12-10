@@ -5,7 +5,7 @@ import Axios from 'axios'
 import { useRouter } from 'next/router'
 
 import InputGroup from '../components/InputGroup'
-import { useAuthState } from '../context/auth'
+import { useAuthState } from '../../context/auth'
 
 export default function Register() {
   const [email, setEmail] = useState('')

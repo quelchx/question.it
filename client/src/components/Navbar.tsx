@@ -2,7 +2,7 @@ import Axios from 'axios'
 import Link from 'next/link'
 import { Fragment } from 'react'
 
-import { useAuthState, useAuthDispatch } from '../context/auth'
+import { useAuthState, useAuthDispatch } from '../../context/auth'
 
 import RedditLogo from '../images/reddit.svg'
 
