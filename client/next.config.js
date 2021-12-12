@@ -5,10 +5,14 @@ module.exports = {
       issuer: {
         test: /\.(js|ts)x?$/,
       },
-      use: ['@svgr/webpack'],
-    })
+      use: ["@svgr/webpack"],
+    });
 
-    return config
+    return config;
+  },
+  images: {
+    // if having an error remove the www. and test
+    domains: ["www.gravatar.com", "localhost"],
   },
   reactStrictMode: true,
-}
+};

@@ -3,6 +3,7 @@ import { createConnection } from 'typeorm'
 import express from 'express'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
+
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
@@ -29,6 +30,8 @@ app.use(
     optionsSuccessStatus: 200,
   })
 )
+
+app.use(express.static('public'))
 
 app.get('/', (_, res) => res.send('Hello World'))
 app.use('/api/auth', authRoutes)
