@@ -1,87 +1,100 @@
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import useSWR from "swr";
-import Image from "next/image";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import classNames from "classnames";
+import Head from 'next/head'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import Image from 'next/image'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import classNames from 'classnames'
 
-import { Post, Comment } from "../../../../types";
-import Sidebar from "../../../../components/Sidebar";
-import Axios from "axios";
-import { useAuthState } from "../../../../../context/auth";
-import ActionButton from "../../../../components/ActionButton";
-import { FormEvent, useState } from "react";
+import { Post, Comment } from '../../../../types'
+import Sidebar from '../../../../components/Sidebar'
+import Axios from 'axios'
+import { useAuthState } from '../../../../../context/auth'
+import ActionButton from '../../../../components/ActionButton'
+import { FormEvent, useEffect, useState } from 'react'
 
-dayjs.extend(relativeTime);
+dayjs.extend(relativeTime)
 
 export default function PostPage() {
   // Local state
-  const [newComment, setNewComment] = useState("");
+  const [newComment, setNewComment] = useState('')
+  const [description, setDescription] = useState('')
   // Global state
-  const { authenticated, user } = useAuthState();
+  const { authenticated, user } = useAuthState()
 
   // Utils
-  const router = useRouter();
-  const { identifier, sub, slug } = router.query;
+  const router = useRouter()
+  const { identifier, sub, slug } = router.query
 
   const { data: post, error } = useSWR<Post>(
     identifier && slug ? `/posts/${identifier}/${slug}` : null
-  );
+  )
 
   const { data: comments, revalidate } = useSWR<Comment[]>(
     identifier && slug ? `/posts/${identifier}/${slug}/comments` : null
-  );
+  )
 
-  if (error) router.push("/");
+  if (error) router.push('/')
+
+  useEffect(() => {
+    if (!post) return
+    let desc = post.body || post.title
+    desc = desc.substring(0, 158).concat('..') // Hello world..
+    setDescription(desc)
+  }, [post])
 
   const vote = async (value: number, comment?: Comment) => {
     // If not logged in go to login
-    if (!authenticated) router.push("/login");
+    if (!authenticated) router.push('/login')
 
     // If vote is the same reset vote
     if (
       (!comment && value === post.userVote) ||
       (comment && comment.userVote === value)
     )
-      value = 0;
+      value = 0
 
     try {
-      await Axios.post("/misc/vote", {
+      await Axios.post('/misc/vote', {
         identifier,
         slug,
         commentIdentifier: comment?.identifier,
         value,
-      });
+      })
 
-      revalidate();
+      revalidate()
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
-  };
+  }
 
   const submitComment = async (event: FormEvent) => {
-    event.preventDefault();
-    if (newComment.trim() === "") return;
+    event.preventDefault()
+    if (newComment.trim() === '') return
 
     try {
       await Axios.post(`/posts/${post.identifier}/${post.slug}/comments`, {
         body: newComment,
-      });
+      })
 
-      setNewComment("");
+      setNewComment('')
 
-      revalidate();
+      revalidate()
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
-  };
+  }
 
   return (
     <>
       <Head>
         <title>{post?.title}</title>
+        <meta name="description" content={description}></meta>
+        <meta property="og:description" content={description} />
+        <meta property="og:title" content={post?.title} />
+        <meta property="twitter:description" content={description} />
+        <meta property="twitter:title" content={post?.title} />
       </Head>
       <Link href={`/r/${sub}`}>
         <a>
@@ -116,8 +129,8 @@ export default function PostPage() {
                       onClick={() => vote(1)}
                     >
                       <i
-                        className={classNames("icon-arrow-up", {
-                          "text-red-500": post.userVote === 1,
+                        className={classNames('icon-arrow-up', {
+                          'text-red-500': post.userVote === 1,
                         })}
                       ></i>
                     </div>
@@ -128,8 +141,8 @@ export default function PostPage() {
                       onClick={() => vote(-1)}
                     >
                       <i
-                        className={classNames("icon-arrow-down", {
-                          "text-blue-600": post.userVote === -1,
+                        className={classNames('icon-arrow-down', {
+                          'text-blue-600': post.userVote === -1,
                         })}
                       ></i>
                     </div>
@@ -182,7 +195,7 @@ export default function PostPage() {
                   {authenticated ? (
                     <div>
                       <p className="mb-1 text-xs">
-                        Comment as{" "}
+                        Comment as{' '}
                         <Link href={`/u/${user.username}`}>
                           <a className="font-semibold text-blue-500">
                             {user.username}
@@ -198,7 +211,7 @@ export default function PostPage() {
                         <div className="flex justify-end">
                           <button
                             className="px-3 py-1 blue button"
-                            disabled={newComment.trim() === ""}
+                            disabled={newComment.trim() === ''}
                           >
                             Comment
                           </button>
@@ -235,8 +248,8 @@ export default function PostPage() {
                         onClick={() => vote(1, comment)}
                       >
                         <i
-                          className={classNames("icon-arrow-up", {
-                            "text-red-500": comment.userVote === 1,
+                          className={classNames('icon-arrow-up', {
+                            'text-red-500': comment.userVote === 1,
                           })}
                         ></i>
                       </div>
@@ -247,8 +260,8 @@ export default function PostPage() {
                         onClick={() => vote(-1, comment)}
                       >
                         <i
-                          className={classNames("icon-arrow-down", {
-                            "text-blue-600": comment.userVote === -1,
+                          className={classNames('icon-arrow-down', {
+                            'text-blue-600': comment.userVote === -1,
                           })}
                         ></i>
                       </div>
@@ -280,5 +293,5 @@ export default function PostPage() {
         {post && <Sidebar sub={post.sub} />}
       </div>
     </>
-  );
+  )
 }
